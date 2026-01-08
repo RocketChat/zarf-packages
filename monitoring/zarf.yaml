@@ -1,0 +1,52 @@
+kind: ZarfPackageConfig
+metadata:
+  name: rocketchat-monitoring
+  description: A basic stack with Prometheus and Grafana
+  version: 0.0.1
+
+components:
+  - name: monitoring
+    required: true
+    charts:
+      - name: monitoring
+        version: 0.0.9
+        namespace: monitoring
+        url: https://rocketchat.github.io/helm-charts
+        #repoName: helm-charts
+        releaseName: monitoring
+        valuesFiles:
+          - values.yaml
+
+    manifests:
+      - name: grafana-ui-connect
+        namespace: monitoring
+        files:
+          - grafana-ui-connect.yaml
+
+    healthChecks:
+      - name: grafana-deployment
+        namespace: monitoring
+        apiVersion: apps/v1
+        kind: Deployment
+      - name: prometheus-monitoring-operator-prometheus
+        namespace: monitoring
+        apiVersion: apps/v1
+        kind: StatefulSet
+
+    images:
+      - ghcr.io/grafana/grafana-operator:v5.18.0
+      - quay.io/prometheus/node-exporter:v1.9.1
+      - quay.io/prometheus-operator/prometheus-config-reloader:v0.83.0
+      - quay.io/prometheus-operator/prometheus-operator:v0.83.0
+      - quay.io/prometheus/prometheus:v3.4.2
+      - quay.io/thanos/thanos:v0.39.1
+      - registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.0
+      - registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0
+      - docker.io/grafana/grafana:11.3.0
+
+variables:
+  - name: MONITORING_STORAGECLASS_NAME
+    description: "The StorageClass name"
+    prompt: true
+    default: longhorn
+

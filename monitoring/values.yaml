@@ -1,0 +1,13 @@
+operator:
+  prometheus:
+    prometheusSpec:
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: ###ZARF_VAR_MONITORING_STORAGECLASS_NAME###
+
+grafana:
+  enabled: true
+  deploy:
+    enabled: true
+    storageClassName: ###ZARF_VAR_MONITORING_STORAGECLASS_NAME###
