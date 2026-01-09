@@ -1,0 +1,32 @@
+deployment:
+  replicas: 2
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+ingressRoute:
+  dashboard:
+    enabled: false
+globalArguments:
+- "--api.insecure=false"
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+ports:
+  web:
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
+        permanent: true
+metrics:
+  prometheus:
+    service:
+      enabled: true
+    serviceMonitor:
+      enabled: true
+service:
+  type: ###ZARF_VAR_LOADBALANCER_SERVICE_TYPE###
+  annotations: 
+    ###ZARF_VAR_LOADBALANCER_SERVICE_ANNOTATIONS###
