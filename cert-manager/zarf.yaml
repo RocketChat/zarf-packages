@@ -1,0 +1,55 @@
+kind: ZarfPackageConfig
+metadata:
+  name: rocketchat-cert-manager
+  description: Certificate management 
+  version: 0.0.4
+
+components:
+  - name: cert-manager
+    required: true
+    charts:
+      - name: cert-manager
+        version: v1.18.2
+        namespace: cert-manager
+        url: https://charts.jetstack.io
+        releaseName: cert-manager
+        valuesFiles:
+          - values.yaml
+
+    manifests:
+      - name: cert-issuer
+        namespace: cert-manager
+        files:
+          - ca-issuer.yaml
+
+    healthChecks:
+      - name: cert-manager
+        namespace: cert-manager
+        apiVersion: apps/v1
+        kind: Deployment
+      - name: cert-manager-cainjector
+        namespace: cert-manager
+        apiVersion: apps/v1
+        kind: Deployment
+      - name: cert-manager-webhook
+        namespace: cert-manager
+        apiVersion: apps/v1
+        kind: Deployment
+
+    images:
+      - quay.io/jetstack/cert-manager-cainjector:v1.18.2
+      - quay.io/jetstack/cert-manager-controller:v1.18.2
+      - quay.io/jetstack/cert-manager-acmesolver:v1.18.2
+      - quay.io/jetstack/cert-manager-webhook:v1.18.2
+      - quay.io/jetstack/cert-manager-startupapicheck:v1.18.2
+
+variables:
+  - name: CERTMANAGER_CA_ISSUER_SECRET_NAME
+    description: "Internal CA issuer secret name expected in cert-manager namespace (default is the self-signed CA secret)"
+    prompt: true
+    default: root-secret
+  - name: CERTMANAGER_SELFSIGNED_CA_COMMON_NAME
+    description: "Default self-signed CA common name"
+    prompt: true
+    default: my-selfsigned-ca
+
