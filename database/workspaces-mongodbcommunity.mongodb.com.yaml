@@ -1,0 +1,75 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: workspaces
+  namespace: mongodb
+spec:
+  members: ###ZARF_VAR_DATABASE_MEMBERS### # 3
+  type: ReplicaSet
+  version: "8.0.14"
+  prometheus:
+    username: prometheus-username
+    passwordSecretRef:
+      name: metrics-endpoint-password
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: workspaces-admin
+      db: admin
+      passwordSecretRef:
+        name: workspaces-mongodb-admin-secret
+      roles:
+        - name: clusterAdmin
+          db: admin
+        - name: userAdminAnyDatabase
+          db: admin
+      scramCredentialsSecretName: my-scram
+  additionalMongodConfig:
+    storage.wiredTiger.engineConfig.journalCompressor: zlib
+  statefulSet:
+    spec:
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: mongodb
+      template:
+        metadata:
+          labels:
+           app.kubernetes.io/name: mongodb
+        spec:
+          containers:
+            - name: mongod
+              resources:
+                limits:
+                  cpu: ###ZARF_VAR_DATABASE_MONGOD_CPU_LIMITS### # 1500m
+                  memory: ###ZARF_VAR_DATABASE_MONGOD_MEMORY_LIMITS### # 6Gi
+                requests:
+                  cpu: ###ZARF_VAR_DATABASE_MONGOD_CPU_REQUESTS### # 500m
+                  memory: ###ZARF_VAR_DATABASE_MONGOD_MEMORY_REQUESTS###  # 3Gi
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: app.kubernetes.io/name
+                        operator: In
+                        values:
+                          - mongodb
+                  topologyKey: "kubernetes.io/hostname"
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            storageClassName: ###ZARF_VAR_DATABASE_STORAGECLASS_NAME###
+            resources:
+              requests:
+                storage: ###ZARF_VAR_DATABASE_DATA_STORAGE_SIZE###  # 10G
+        - metadata:
+            name: logs-volume
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            storageClassName: ###ZARF_VAR_DATABASE_STORAGECLASS_NAME###
+            resources:
+              requests:
+                storage: ###ZARF_VAR_DATABASE_LOGS_STORAGE_SIZE### # 2G
