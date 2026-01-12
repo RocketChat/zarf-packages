@@ -17,7 +17,7 @@ spec:
   users:
     - name: workspaces-admin
       db: admin
-      passwordSecretRef: # handled by launchpad
+      passwordSecretRef:
         name: workspaces-mongodb-admin-secret
       roles:
         - name: clusterAdmin
@@ -39,7 +39,7 @@ spec:
         spec:
           containers:
             - name: mongod
-              resources: # handled by launchpad
+              resources:
                 limits:
                   cpu: ###ZARF_VAR_DATABASE_MONGOD_CPU_LIMITS### # 1500m
                   memory: ###ZARF_VAR_DATABASE_MONGOD_MEMORY_LIMITS### # 6Gi
@@ -56,7 +56,7 @@ spec:
                         values:
                           - mongodb
                   topologyKey: "kubernetes.io/hostname"
-      volumeClaimTemplates: # handled by launchpad
+      volumeClaimTemplates:
         - metadata:
             name: data-volume
           spec:
