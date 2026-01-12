@@ -1,0 +1,105 @@
+kind: ZarfPackageConfig
+metadata:
+  name: rocketchat-database
+  description: A stack with MongoDB and Airlock operators
+  version: 0.0.3
+
+components:
+  - name: mongodb-operator
+    #required: true
+    charts:
+      - name: community-operator
+        version: v0.13.0
+        namespace: mongodb
+        url: https://mongodb.github.io/helm-charts/
+        releaseName: community-operator
+        valuesFiles:
+          - mongodb-values.yaml
+
+    manifests:
+      - name: mongodb-monitoring
+        namespace: mongodb
+        files:
+          - mongodb-sm-servicemonitors.monitoring.coreos.com.yaml
+          - metrics-endpoint-password-secret.yaml
+      - name: workspaces-cluster
+        namespace: mongodb
+        files:
+          - workspaces-mongodbcommunity.mongodb.com.yaml
+          - workspaces-mongodb-admin-secret.yaml
+
+    healthChecks:
+      - name: mongodb-kubernetes-operator
+        namespace: mongodb
+        apiVersion: apps/v1
+        kind: Deployment
+      - name: workspaces
+        namespace: mongodb
+        apiVersion: apps/v1
+        kind: StatefulSet
+
+    images:
+      - docker.io/mongodb/mongodb-community-server:8.0.14-ubi8
+      - quay.io/mongodb/mongodb-agent-ubi:108.0.6.8796-1
+      - quay.io/mongodb/mongodb-kubernetes-operator:0.13.0
+      - quay.io/mongodb/mongodb-kubernetes-operator-version-upgrade-post-start-hook:1.0.10
+      - quay.io/mongodb/mongodb-kubernetes-readinessprobe:1.0.23
+
+  - name: airlock
+    #required: true
+    manifests:
+      - name: airlock-operator
+        namespace: airlock-system
+        files:
+          - airlock-aio.yaml
+      - name: airlock-workspaces-cluster
+        namespace: mongodb
+        files:
+          - airlock-workspaces-secret.yaml
+          - workspaces-mongodbclusters.airlock.cloud.rocket.chat.yaml
+
+    healthChecks:
+      - name: airlock-controller-manager
+        namespace: airlock-system
+        apiVersion: apps/v1
+        kind: Deployment
+
+    images:
+      - rocketchat/airlock:6af3b449b5028bc3079695c06c95a9411d5b456d
+      - gcr.io/kubebuilder/kube-rbac-proxy:v0.13.0
+
+variables:
+  - name: DATABASE_STORAGECLASS_NAME
+    description: "The StorageClass name"
+    prompt: true
+    default: longhorn
+  - name: DATABASE_MEMBERS
+    description: "The size of replica set"
+    prompt: true
+    default: "3"
+  - name: DATABASE_MONGOD_CPU_LIMITS
+    description: "Mongod resource CPU limits"
+    default: 1500m
+  - name: DATABASE_MONGOD_MEMORY_LIMITS
+    description: "Mongod resource memory limits"
+    default: 6Gi
+  - name: DATABASE_MONGOD_CPU_REQUESTS
+    description: "Mongod resource CPU requests"
+    default: 500m
+  - name: DATABASE_MONGOD_MEMORY_REQUESTS
+    description: "Mongod resource memory requests"
+    default: 3Gi
+  - name: DATABASE_DATA_STORAGE_SIZE
+    description: "Data volume size"
+    prompt: true
+    default: 7G
+  - name: DATABASE_LOGS_STORAGE_SIZE
+    description: "Logs volume size"
+    default: 2G
+  - name: DATABASE_METRICS_PASSWORD_INTERNAL
+    description: "Password for internal monitoring stack"
+    default: randomly-auto-generated
+  - name: DATABASE_ADMIN_PASSWORD
+    description: "The cluster admin password"
+    prompt: true
+    default: b4n4n4-5up3r
