@@ -1,0 +1,113 @@
+kind: ZarfPackageConfig
+metadata:
+  name: rocketchat-server-operator
+  description: Rocket.Chat and launchcontrol operator
+  version: 0.0.3
+
+components:
+  - name: server-release
+    #required: true
+    images:
+      - rocketchat/account-service:7.10.6
+      - rocketchat/authorization-service:7.10.6
+      - rocketchat/ddp-streamer-service:7.10.6
+      - rocketchat/omnichannel-transcript-service:7.10.6
+      - rocketchat/presence-service:7.10.6
+      - rocketchat/queue-worker-service:7.10.6
+      - rocketchat/rocket.chat:7.10.6
+      - nats:2.4.0-alpine # hidden in operator
+      - natsio/prometheus-nats-exporter:0.9.3 # hidden in operator
+      - natsio/nats-server-config-reloader:0.14.1 # hidden in operator
+
+  - name: launchcontrol-deps
+    #required: true
+    manifests:
+      - name: mongodbaccessrequests-airlock-crd
+        namespace: airlock-system
+        files:
+          - mongodbaccessrequests.airlock.cloud.rocket.chat-customresourcedefinition.yaml
+
+  - name: launchcontrol
+    #required: true
+    manifests:
+      - name: launchcontrol-operator
+        namespace: launchcontrol-system
+        files:
+          - launchcontrol-aio.yaml
+
+    healthChecks:
+      - name: launchcontrol-controller-manager
+        namespace: launchcontrol-system
+        apiVersion: apps/v1
+        kind: Deployment
+
+    images:
+      - rocketchat/launchcontrol:c8856b552bda2266572c3640cdd0735c14ba508c
+      - gcr.io/kubebuilder/kube-rbac-proxy:v0.13.0
+
+  - name: workspace
+    #required: true
+    manifests:
+      - name: custom-resource
+        #namespace: launchcontrol-system
+        files:
+          - workspace-cr.yaml
+          - rocketchat-pod-monitor.yaml
+
+variables:
+  - name: LAUNCHCONTROL_CLUSTER_ISSUER
+    description: "A cert-manager's ClusterIssuer name to be used for TLS ingress"
+    default: ca-issuer
+  - name: WORKSPACE_MONGO_URL
+    description: "The connection string to the MongoDB server. Defaults to airlock"
+    default: "" # == nil
+  - name: WORKSPACE_NAME
+    description: "The name of the workspace"
+    prompt: true
+    default: my-chat
+  - name: WORKSPACE_ADDRESS
+    description: "The address to be used for ingress"
+    prompt: true
+    default: my-chat.my.local
+  - name: WORKSPACE_ROCKETCHAT_REPLICAS
+    description: "The number of deployment replicas"
+    default: "2"
+  - name: WORKSPACE_DDPSTREAMER_REPLICAS
+    description: "The number of deployment replicas"
+    default: "1"
+  - name: WORKSPACE_ACCOUNTSERVICE_REPLICAS
+    description: "The number of deployment replicas"
+    default: "1"
+  - name: WORKSPACE_AUTHORIZATIONSERVICE_REPLICAS
+    description: "The number of deployment replicas"
+    default: "1"
+  - name: WORKSPACE_PRESENCESERVICE_REPLICAS
+    description: "The number of deployment replicas"
+    default: "1"
+  - name: WORKSPACE_ENABLE_OMNI_TRANSCRIPT
+    description: "Enable the omni transcript alpha feature"
+    default: "false"
+  - name: WORKSPACE_LABELS
+    description: "Deploy-specific labels"
+    default: "{}"
+  - name: WORKSPACE_CLOUD_ID
+    description: "Cloud registration ID"
+    default: ""
+  - name: WORKSPACE_CLOUD_CLIENT_ID
+    description: "Cloud workspace client ID"
+    default: "zarf-offline"
+  - name: WORKSPACE_CLOUD_CLIENT_SECRET
+    description: "Cloud workspace client secret"
+    default: "zarf-offline"
+  - name: WORKSPACE_CLOUD_PUBLIC_KEY
+    description: "Cloud workspace public key"
+    default: ""
+  - name: WORKSPACE_CLOUD_REGISTRATION_CLIENT_URI
+    description: "Cloud workspace client URI"
+    default: ""
+  - name: WORKSPACE_SHOW_SETUP_WIZARD
+    description: "Show setup wizard"
+    default: "completed"
+  - name: WORKSPACE_LICENSE
+    description: "Workspace license"
+    default: ""
