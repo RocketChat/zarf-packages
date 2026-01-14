@@ -2,7 +2,7 @@ kind: ZarfPackageConfig
 metadata:
   name: rocketchat-server-operator
   description: Rocket.Chat and launchcontrol operator
-  version: 0.0.3
+  version: 0.0.4
 
 components:
   - name: server-release
@@ -18,14 +18,6 @@ components:
       - nats:2.4.0-alpine # hidden in operator
       - natsio/prometheus-nats-exporter:0.9.3 # hidden in operator
       - natsio/nats-server-config-reloader:0.14.1 # hidden in operator
-
-  - name: launchcontrol-deps
-    #required: true
-    manifests:
-      - name: mongodbaccessrequests-airlock-crd
-        namespace: airlock-system
-        files:
-          - mongodbaccessrequests.airlock.cloud.rocket.chat-customresourcedefinition.yaml
 
   - name: launchcontrol
     #required: true
@@ -89,7 +81,7 @@ variables:
     default: "false"
   - name: WORKSPACE_LABELS
     description: "Deploy-specific labels"
-    default: "{}"
+    default: "{x-launchpad-monitoring: active}"
   - name: WORKSPACE_CLOUD_ID
     description: "Cloud registration ID"
     default: ""

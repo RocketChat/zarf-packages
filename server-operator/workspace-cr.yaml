@@ -3,7 +3,6 @@ kind: Workspace
 metadata:
   name: ###ZARF_VAR_WORKSPACE_NAME###
   labels:
-    x-launchpad-monitoring: active
     ###ZARF_VAR_WORKSPACE_LABELS###
 spec:
   imagePrefix: rocketchat
@@ -42,16 +41,16 @@ spec:
       value: ###ZARF_VAR_WORKSPACE_SHOW_SETUP_WIZARD###
     - name: ROCKETCHAT_LICENSE
       value: ###ZARF_VAR_WORKSPACE_LICENSE###
- ddpStreamer:
-   replicas: ###ZARF_VAR_WORKSPACE_DDPSTREAMER_REPLICAS###
-accountService:
-  replicas: ###ZARF_VAR_WORKSPACE_ACCOUNTSERVICE_REPLICAS###
-authorizationService:
-  replicas: ###ZARF_VAR_WORKSPACE_AUTHORIZATIONSERVICE_REPLICAS###
-presenceService:
-  replicas: ###ZARF_VAR_WORKSPACE_PRESENCESERVICE_REPLICAS###
-streamHub:
-  replicas: 0
-alphaFeatures:
-  enableOmniTranscript: ###ZARF_VAR_WORKSPACE_ENABLE_OMNI_TRANSCRIPT###
+  ddpStreamer:
+    replicas: ###ZARF_VAR_WORKSPACE_DDPSTREAMER_REPLICAS###
+  accountService:
+    replicas: ###ZARF_VAR_WORKSPACE_ACCOUNTSERVICE_REPLICAS###
+  authorizationService:
+    replicas: ###ZARF_VAR_WORKSPACE_AUTHORIZATIONSERVICE_REPLICAS###
+  presenceService:
+    replicas: ###ZARF_VAR_WORKSPACE_PRESENCESERVICE_REPLICAS###
+  streamHub:
+    replicas: 0
+  alphaFeatures:
+    enableOmniTranscript: ###ZARF_VAR_WORKSPACE_ENABLE_OMNI_TRANSCRIPT###
 
