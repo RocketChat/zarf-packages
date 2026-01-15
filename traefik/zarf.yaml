@@ -1,24 +1,24 @@
 kind: ZarfPackageConfig
 metadata:
-  name: rocketchat-loadbalancer
+  name: rocketchat-traefik
   description: Traefik loadbalancer
-  version: 0.0.3
+  version: 3.5.0-z1
 
 components:
-  - name: loadbalancer
+  - name: traefik
     required: true
     charts:
       - name: traefik
         version: v37.0.0
-        namespace: loadbalancer
+        namespace: traefik
         url: https://helm.traefik.io/traefik
         releaseName: traefik
         valuesFiles:
-          - values.yaml
+          - traefik-values.yaml
 
     healthChecks:
       - name: traefik
-        namespace: loadbalancer
+        namespace: traefik
         apiVersion: apps/v1
         kind: Deployment
 
