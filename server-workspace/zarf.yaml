@@ -1,12 +1,12 @@
 kind: ZarfPackageConfig
 metadata:
-  name: rocketchat-server-operator
-  description: Rocket.Chat and launchcontrol operator
+  name: rocketchat-server-workspace
+  description: Rocket.Chat workspace
   version: 7.10.6-z1
 
 components:
-  - name: server-release
-    #required: true
+  - name: server
+    required: true
     images:
       - rocketchat/account-service:7.10.6
       - rocketchat/authorization-service:7.10.6
@@ -19,37 +19,15 @@ components:
       - natsio/prometheus-nats-exporter:0.9.3 # hidden in operator
       - natsio/nats-server-config-reloader:0.14.1 # hidden in operator
 
-  - name: launchcontrol
-    #required: true
-    manifests:
-      - name: launchcontrol-operator
-        namespace: launchcontrol-system
-        files:
-          - launchcontrol-aio.yaml
-
-    healthChecks:
-      - name: launchcontrol-controller-manager
-        namespace: launchcontrol-system
-        apiVersion: apps/v1
-        kind: Deployment
-
-    images:
-      - rocketchat/launchcontrol:c8856b552bda2266572c3640cdd0735c14ba508c
-      - gcr.io/kubebuilder/kube-rbac-proxy:v0.13.0
-
   - name: workspace
-    #required: true
+    required: true
     manifests:
       - name: custom-resource
-        #namespace: launchcontrol-system
         files:
           - workspace-cr.yaml
           - rocketchat-pod-monitor.yaml
 
 variables:
-  - name: LAUNCHCONTROL_CLUSTER_ISSUER
-    description: "A cert-manager's ClusterIssuer name to be used for TLS ingress"
-    default: ca-issuer
   - name: WORKSPACE_MONGO_URL
     description: "The connection string to the MongoDB server. Defaults to airlock"
     default: "" # == nil
