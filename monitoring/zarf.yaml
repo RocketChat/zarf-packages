@@ -2,7 +2,7 @@ kind: ZarfPackageConfig
 metadata:
   name: rocketchat-monitoring
   description: A basic stack with Prometheus and Grafana
-  version: 0.0.1
+  version: 0.0.9-z1
 
 components:
   - name: monitoring
@@ -12,10 +12,9 @@ components:
         version: 0.0.9
         namespace: monitoring
         url: https://rocketchat.github.io/helm-charts
-        #repoName: helm-charts
         releaseName: monitoring
         valuesFiles:
-          - values.yaml
+          - monitoring-values.yaml
 
     manifests:
       - name: grafana-ui-connect

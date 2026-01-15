@@ -1,12 +1,12 @@
 kind: ZarfPackageConfig
 metadata:
-  name: rocketchat-database
-  description: A stack with MongoDB and Airlock operators
-  version: 0.0.6
+  name: rocketchat-mongodb
+  description: MongoDB Controllers for Kubernetes (MCK) and workspaces CE cluster
+  version: 1.6.1-z1
 
 components:
   - name: mongodb-operator
-    #required: true
+    required: true
     charts:
       - name: mongodb-kubernetes
         version: v1.6.1
@@ -44,29 +44,6 @@ components:
       - quay.io/mongodb/mongodb-kubernetes-readinessprobe:1.0.23
       - quay.io/mongodb/mongodb-kubernetes:1.6.1
       - quay.io/mongodb/mongodb-agent:108.0.2.8729-1
-
-  - name: airlock
-    #required: true
-    manifests:
-      - name: airlock-operator
-        namespace: airlock-system
-        files:
-          - airlock-aio.yaml
-      - name: airlock-workspaces-cluster
-        namespace: mongodb
-        files:
-          - airlock-workspaces-secret.yaml
-          - workspaces-mongodbclusters.airlock.cloud.rocket.chat.yaml
-
-    healthChecks:
-      - name: airlock-controller-manager
-        namespace: airlock-system
-        apiVersion: apps/v1
-        kind: Deployment
-
-    images:
-      - rocketchat/airlock:6af3b449b5028bc3079695c06c95a9411d5b456d
-      - gcr.io/kubebuilder/kube-rbac-proxy:v0.13.0
 
 variables:
   - name: DATABASE_STORAGECLASS_NAME

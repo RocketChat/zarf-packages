@@ -1,0 +1,39 @@
+kind: ZarfPackageConfig
+metadata:
+  name: rocketchat-airlock
+  description: Airlock operator for data access management
+  version: 0.0.1-z1
+
+components:
+  - name: airlock
+    required: true
+    manifests:
+      - name: operator
+        namespace: airlock-system
+        files:
+          - airlock-aio.yaml
+      - name: airlock-workspaces-cluster
+        namespace: mongodb
+        files:
+          - airlock-workspaces-secret.yaml
+          - workspaces-mongodbclusters.airlock.cloud.rocket.chat.yaml
+
+    healthChecks:
+      - name: airlock-controller-manager
+        namespace: airlock-system
+        apiVersion: apps/v1
+        kind: Deployment
+
+    images:
+      - rocketchat/airlock:6af3b449b5028bc3079695c06c95a9411d5b456d
+      - gcr.io/kubebuilder/kube-rbac-proxy:v0.13.0
+
+variables:
+  - name: AIRLOCK_ADMIN_USER
+    description: "The admin user for workspaces cluster"
+    prompt: true
+    default: workspaces-admin
+  - name: AIRLOCK_ADMIN_PASSWORD
+    description: "The admin password for workspaces cluster"
+    prompt: true
+    default: b4n4n4-5up3r

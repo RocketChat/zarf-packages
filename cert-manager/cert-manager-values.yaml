@@ -1,0 +1,4 @@
+crds:
+  enabled: true
+webhook:
+  ###ZARF_VAR_CERTMANAGER_WEBHOOK###
