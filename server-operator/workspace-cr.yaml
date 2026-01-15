@@ -1,0 +1,58 @@
+apiVersion: launchcontrol.cloud.rocket.chat/v1alpha1
+kind: Workspace
+metadata:
+  name: ###ZARF_VAR_WORKSPACE_NAME###
+  labels:
+    ###ZARF_VAR_WORKSPACE_LABELS###
+spec:
+  imagePrefix: rocketchat
+  imageTag: 7.10.6
+  imagePullPolicy: IfNotPresent
+  databaseClusterCode: workspaces
+  databaseName: ###ZARF_VAR_WORKSPACE_NAME###
+  metricsEnabled: true
+  baseDomain: launchpad-zarf.rocket.chat # TODO: ignore empty https://github.com/search?q=repo%3ARocketChat%2Flaunchcontrol%20basedomain&type=code
+  customDomain: ###ZARF_VAR_WORKSPACE_ADDRESS### 
+  mongoUrl: ###ZARF_VAR_WORKSPACE_MONGO_URL###
+  rocketchat:
+    replicas: ###ZARF_VAR_WORKSPACE_ROCKETCHAT_REPLICAS###
+    env:
+    - name: OVERWRITE_SETTING_Log_Level
+      value: "2"
+    - name: LICENSE_DEBUG
+      value: "true"
+    - name: DEPLOY_METHOD
+      value: "rocketchat-zarf"
+    - name: DEPLOY_PLATFORM
+      value: "launchpad-zarf"
+    - name: AUTO_ACCEPT_FINGERPRINT
+      value: "true"
+    - name: OVERWRITE_SETTING_Cloud_Workspace_Id
+      value: ###ZARF_VAR_WORKSPACE_CLOUD_ID###
+    - name: OVERWRITE_SETTING_Cloud_Workspace_Name
+      value: ###ZARF_VAR_WORKSPACE_NAME###
+    - name: OVERWRITE_SETTING_Cloud_Workspace_Client_Id
+      value: ###ZARF_VAR_WORKSPACE_CLOUD_CLIENT_ID###
+    - name: OVERWRITE_SETTING_Cloud_Workspace_Client_Secret
+      value: ###ZARF_VAR_WORKSPACE_CLOUD_CLIENT_SECRET###
+    - name: OVERWRITE_SETTING_Cloud_Workspace_PublicKey
+      value: ###ZARF_VAR_WORKSPACE_CLOUD_PUBLIC_KEY###
+    - name: OVERWRITE_SETTING_Cloud_Workspace_Registration_Client_Uri
+      value: ###ZARF_VAR_WORKSPACE_CLOUD_REGISTRATION_CLIENT_URI###
+    - name: OVERWRITE_SETTING_Show_Setup_Wizard
+      value: ###ZARF_VAR_WORKSPACE_SHOW_SETUP_WIZARD###
+    - name: ROCKETCHAT_LICENSE
+      value: ###ZARF_VAR_WORKSPACE_LICENSE###
+  ddpStreamer:
+    replicas: ###ZARF_VAR_WORKSPACE_DDPSTREAMER_REPLICAS###
+  accountService:
+    replicas: ###ZARF_VAR_WORKSPACE_ACCOUNTSERVICE_REPLICAS###
+  authorizationService:
+    replicas: ###ZARF_VAR_WORKSPACE_AUTHORIZATIONSERVICE_REPLICAS###
+  presenceService:
+    replicas: ###ZARF_VAR_WORKSPACE_PRESENCESERVICE_REPLICAS###
+  streamHub:
+    replicas: 0
+  alphaFeatures:
+    enableOmniTranscript: ###ZARF_VAR_WORKSPACE_ENABLE_OMNI_TRANSCRIPT###
+
