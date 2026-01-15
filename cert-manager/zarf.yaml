@@ -2,7 +2,7 @@ kind: ZarfPackageConfig
 metadata:
   name: rocketchat-cert-manager
   description: Certificate management 
-  version: 0.0.4
+  version: 1.18.2-z1
 
 components:
   - name: cert-manager
@@ -14,7 +14,7 @@ components:
         url: https://charts.jetstack.io
         releaseName: cert-manager
         valuesFiles:
-          - values.yaml
+          - cert-manager-values.yaml
 
     manifests:
       - name: cert-issuer
@@ -51,5 +51,8 @@ variables:
   - name: CERTMANAGER_SELFSIGNED_CA_COMMON_NAME
     description: "Default self-signed CA common name"
     prompt: true
-    default: my-selfsigned-ca
+    default: Rocket.Chat/Zarf built-in
+  - name: CERTMANAGER_WEBHOOK
+    description: "Specific configuration for the cert-manager webhook"
+    default: "{hostNetwork: true, securePort: 10260}"
 
