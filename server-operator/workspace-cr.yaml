@@ -25,6 +25,8 @@ spec:
       value: "rocketchat-zarf"
     - name: DEPLOY_PLATFORM
       value: "launchpad-zarf"
+    - name: AUTO_ACCEPT_FINGERPRINT
+      value: "true"
     - name: OVERWRITE_SETTING_Cloud_Workspace_Id
       value: ###ZARF_VAR_WORKSPACE_CLOUD_ID###
     - name: OVERWRITE_SETTING_Cloud_Workspace_Name

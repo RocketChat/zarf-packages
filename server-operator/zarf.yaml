@@ -2,7 +2,7 @@ kind: ZarfPackageConfig
 metadata:
   name: rocketchat-server-operator
   description: Rocket.Chat and launchcontrol operator
-  version: 0.0.4
+  version: 7.10.6-z1
 
 components:
   - name: server-release
