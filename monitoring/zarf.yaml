@@ -23,11 +23,15 @@ components:
           - grafana-ui-connect.yaml
 
     healthChecks:
-      - name: grafana-deployment
+      - name: monitoring-grafana
         namespace: monitoring
         apiVersion: apps/v1
         kind: Deployment
       - name: prometheus-monitoring-operator-prometheus
+        namespace: monitoring
+        apiVersion: apps/v1
+        kind: StatefulSet
+      - name: monitoring-loki
         namespace: monitoring
         apiVersion: apps/v1
         kind: StatefulSet
