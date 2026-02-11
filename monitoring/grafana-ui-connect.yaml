@@ -10,7 +10,7 @@ metadata:
     zarf.dev/connect-description: "Expose Grafana web"
 spec:
   selector:
-    app: grafana
+    app: monitoring-grafana
   ports:
     - name: http
       port: 3000
