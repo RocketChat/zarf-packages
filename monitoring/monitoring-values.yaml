@@ -11,3 +11,69 @@ grafana:
   deploy:
     enabled: true
     storageClassName: ###ZARF_VAR_MONITORING_STORAGECLASS_NAME###
+
+loki:
+  limits_config:
+    retention_period: ###ZARF_VAR_MONITORING_LOKI_RETENTION_PERIOD###
+
+  # Total Disk=(Daily Raw Volume×Retention Days×0.15)+Safety Buffer (20%)
+  singleBinary:
+    persistence:
+      size: ###ZARF_VAR_MONITORING_LOKI_PERSISTENCE_SIZE###
+      storageClass: ###ZARF_VAR_MONITORING_STORAGECLASS_NAME###
+
+  global:
+    cluster:
+      profile: ""
+
+  deploymentMode: SingleBinary
+
+  storage:
+    type: filesystem
+
+  # Resource Allocation
+  # Note: Memory requests and limits are identical to prevent OOM kills during query spikes
+  resources:
+    requests:
+      cpu: 500m
+      memory: 2Gi
+    limits:
+      cpu: 2 # Allows Loki to burst during heavy LogQL queries
+      memory: 2Gi
+
+  # Note: Loki: Keep the cache for performance but don't want it stealing 10Gi of RAM
+  # Force the Chunks Cache to a small footprint
+  chunksCache:
+    enabled: true
+    allocatedMemory: 512  # This is the "Magic" key. Value in MB.
+    # We must also force the resources here to match
+    resources:
+      requests:
+        cpu: 100m
+        memory: 700Mi
+      limits:
+        cpu: 500m
+        memory: 700Mi
+
+  # Force the Results Cache to a small footprint
+  resultsCache:
+    enabled: true
+    allocatedMemory: 512
+    resources:
+      requests:
+        cpu: 100m
+        memory: 700Mi
+      limits:
+        cpu: 500m
+        memory: 700Mi
+
+  # Prevent the Memcached sub-chart from using its global defaults
+  memcached:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 700Mi
+      limits:
+        cpu: 500m
+        memory: 700Mi
+
