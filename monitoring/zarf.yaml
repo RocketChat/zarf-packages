@@ -2,14 +2,14 @@ kind: ZarfPackageConfig
 metadata:
   name: rocketchat-monitoring
   description: A basic stack with Prometheus and Grafana
-  version: 0.0.9-z1
+  version: 0.0.10-z1
 
 components:
   - name: monitoring
     required: true
     charts:
       - name: monitoring
-        version: 0.0.9
+        version: 0.0.10
         namespace: monitoring
         url: https://rocketchat.github.io/helm-charts
         releaseName: monitoring
@@ -23,11 +23,15 @@ components:
           - grafana-ui-connect.yaml
 
     healthChecks:
-      - name: grafana-deployment
+      - name: monitoring-grafana
         namespace: monitoring
         apiVersion: apps/v1
         kind: Deployment
       - name: prometheus-monitoring-operator-prometheus
+        namespace: monitoring
+        apiVersion: apps/v1
+        kind: StatefulSet
+      - name: monitoring-loki
         namespace: monitoring
         apiVersion: apps/v1
         kind: StatefulSet
@@ -42,10 +46,24 @@ components:
       - registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.0
       - registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0
       - docker.io/grafana/grafana:11.3.0
+      - docker.io/grafana/loki:3.6.3
+      - docker.io/kiwigrid/k8s-sidecar:1.30.9
+      - docker.io/nginxinc/nginx-unprivileged:1.29-alpine
+      - memcached:1.6.39-alpine
+      - otel/opentelemetry-collector-contrib:0.143.0
+      - prom/memcached-exporter:v0.15.4
 
 variables:
   - name: MONITORING_STORAGECLASS_NAME
     description: "The StorageClass name"
     prompt: true
     default: longhorn
+  - name: MONITORING_LOKI_RETENTION_PERIOD
+    description: "Logs older than this period are automatically deleted by the compactor"
+    prompt: true
+    default: 15d
+  - name: MONITORING_LOKI_PERSISTENCE_SIZE
+    description: "The total disk space allocated for storing logs. Hint: Size=(Daily Raw Volume×Retention Days×0.15)+Safety Buffer (20%)"
+    prompt: true
+    default: 30Gi
 
