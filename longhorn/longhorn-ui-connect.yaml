@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: longhorn-ui-connect
+  namespace: longhorn-system
+  labels:
+    # Enables "zarf connect longhorn-ui"
+    zarf.dev/connect-name: longhorn-ui
+  annotations:
+    zarf.dev/connect-description: "Expose Longhorn web"
+spec:
+  selector:
+    app: longhorn-ui
+  ports:
+    - name: http
+      port: 8000
+      protocol: TCP
+      targetPort: 8000

@@ -1,0 +1,25 @@
+image:
+  pullPolicy: IfNotPresent
+
+  longhorn:
+    # A must so longhorn manager knows the right location
+    manager:
+      repository: ###ZARF_REGISTRY###/longhornio/longhorn-manager
+      tag: v1.10.1
+    engine:
+      repository: ###ZARF_REGISTRY###/longhornio/longhorn-engine
+      tag: v1.10.1
+    ui:
+      repository: ###ZARF_REGISTRY###/longhornio/longhorn-ui
+      tag: v1.10.1
+    instanceManager:
+      repository: ###ZARF_REGISTRY###/longhornio/longhorn-instance-manager
+      tag: v1.10.1
+    shareManager:
+      repository: ###ZARF_REGISTRY###/longhornio/longhorn-share-manager
+      tag: v1.10.1
+
+defaultSettings:
+  registrySecret: private-registry # Ensure Zarf's secret is used
+  systemManagedComponentsRegistryDomain: ###ZARF_REGISTRY###
+
