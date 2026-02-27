@@ -37,3 +37,4 @@ variables:
     description: "The admin password for workspaces cluster"
     prompt: true
     default: b4n4n4-5up3r
+

@@ -80,3 +80,4 @@ variables:
     description: "The cluster admin password"
     prompt: true
     default: b4n4n4-5up3r
+

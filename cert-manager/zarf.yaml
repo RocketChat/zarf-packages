@@ -56,3 +56,4 @@ variables:
     description: "Specific configuration for the cert-manager webhook"
     default: "{hostNetwork: true, securePort: 10260}"
 
+
