@@ -8,7 +8,7 @@ on:
       - '**/zarf.yaml'
 
 jobs:
-  publish-zarf:
+  build-sign-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
