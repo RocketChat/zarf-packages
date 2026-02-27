@@ -3,6 +3,24 @@
 This repository contains a collection of **Zarf packages** designed to deploy and manage a complete Rocket.Chat ecosystem in air-gapped or restricted environments.
 Zarf is an open-source tool designed to simplify the delivery of software into air-gapped, secure, or highly regulated environments by bundling all necessary dependencies into [packages](https://docs.zarf.dev/ref/packages/).
 
+## Deploying packages
+
+It is recommended that your Kubernetes cluster contains  at least 3 nodes with 2 vCPUs, 6 GiB memory and 100G disk each.
+For testing, you can decrease storage and mongod limits. There's a README.md in each package folder with variables and defaults.
+
+### Init the cluster
+
+```
+KUBECONFIG=<kubeconfig> zarf init [--storage-class longhorn] [--confirm]
+```
+
+If there's no reliable storage class in the target cluster, init with what you have, then:
+```
+KUBECONFIG=<kubeconfig> zarf package deploy zarf-package-rocketchat-longhorn-*.tar.zst --components migrate-registry --confirm # move to longhorn
+```
+
+### Deploying
+
 Deploy in order:
 - monitoring (requires a storage class)
 - traefik
@@ -12,7 +30,7 @@ Deploy in order:
 - launchcontrol (requires airlock)
 - server-workspace (requires launchcontrol)
 
-## High-level architectural diagram
+#### High-level architectural diagram
 
 ```mermaid
 graph TD
@@ -80,7 +98,7 @@ graph TD
 
 ---
 
-## Getting Started
+## Developers: Getting Started
 
 Most likely you'll need a lab setup.
 There's a guide for developing Zarf packages https://rocketchat.atlassian.net/wiki/spaces/RnD/pages/756842503/Developing+Rocket.Chat+Zarf+packages

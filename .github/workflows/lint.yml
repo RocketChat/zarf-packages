@@ -1,0 +1,45 @@
+name: Zarf Packages - Lint
+
+on:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - '**/zarf.yaml'
+
+jobs:
+  publish-zarf:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Zarf
+        uses: zarf-dev/setup-zarf@v1
+        with:
+          version: latest
+
+      - name: Lint Changed Packages
+        env:
+          SIGNING_KEY_DATA: ${{ secrets.ZARF_SIGNING_KEY }}
+          KEY_PASSWORD: ${{ secrets.ZARF_KEY_PASSWORD }}
+        run: |
+          # Get changed directories
+          # Use github.base_ref to ensure we compare against the PR's target branch
+          CHANGED_DIRS=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep 'zarf.yaml' | xargs -I {} dirname {} | sort -u)
+
+          if [ -z "$CHANGED_DIRS" ]; then
+            echo "No changes detected in Zarf packages."
+            exit 0
+          fi
+
+          for DIR in $CHANGED_DIRS; do
+            echo "📦 Linting: $DIR"
+            zarf dev lint "$DIR"
+          done
+
