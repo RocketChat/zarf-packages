@@ -33,3 +33,4 @@ variables:
     description: "Cloud-specific annotations for Traefik"
     default: "{}" # Default to empty for K3s/On-prem, or
     # example: zarf package deploy --set LOADBALANCER_SERVICE_ANNOTATIONS='{service.beta.kubernetes.io/aws-load-balancer-type: "nlb"}'
+

@@ -1,0 +1,81 @@
+name: Zarf Packages - Build, Sign, and Push
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - '**/zarf.yaml'
+
+jobs:
+  build-sign-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    env:
+      REGISTRY: ghcr.io
+      REGISTRY_USERNAME: ${{ github.actor }}
+      REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      OCI_PATH: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Zarf
+        uses: zarf-dev/setup-zarf@main
+        with:
+          version: v0.73.0
+
+      - name: Zarf Registry Login
+        run: |
+          echo "${{ env.REGISTRY_TOKEN }}" | zarf tools registry login ${{ env.REGISTRY }} \
+            --username ${{ env.REGISTRY_USERNAME }} \
+            --password-stdin
+
+      - name: Detect and Process Changed Packages
+        env:
+          SIGNING_KEY_DATA: ${{ secrets.ZARF_SIGNING_KEY }}
+          KEY_PASSWORD: ${{ secrets.ZARF_KEY_PASSWORD }}
+        run: |
+          touch cosign.key
+          chmod 600 cosign.key
+          echo "$SIGNING_KEY_DATA" > cosign.key
+          
+          # Ensure cleanup happens even if the script fails
+          trap 'rm -f cosign.key' EXIT
+
+          # Get changed directories
+          # Use the commits from the push event specifically
+          CHANGED_DIRS=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep 'zarf.yaml' | xargs -I {} dirname {} | sort -u)
+
+          if [ -z "$CHANGED_DIRS" ]; then
+            echo "No changes detected in Zarf packages."
+            exit 0
+          fi
+
+          for DIR in $CHANGED_DIRS; do
+            echo "-------------------------------------------------------"
+            echo "📦 Building: $DIR"
+            zarf package create "$DIR" --confirm --output "$DIR"
+
+            # Locate the package file
+            PACKAGE_FILE=$(ls "$DIR"/zarf-package-*.tar.zst)
+
+            echo "📦 Signing: $PACKAGE_FILE"
+            zarf package sign "$PACKAGE_FILE" \
+              --signing-key cosign.key \
+              --signing-key-pass "$KEY_PASSWORD" \
+              --confirm
+
+            echo "📦 Publishing: $PACKAGE_FILE"
+            OCI_PATH_LOWER=$(echo "$OCI_PATH" | tr '[:upper:]' '[:lower:]')
+            zarf package publish "$PACKAGE_FILE" "oci://$OCI_PATH_LOWER" --confirm
+            
+            echo "✅ Successfully pushed $PACKAGE_FILE"
+          done
+
