@@ -27,3 +27,4 @@ variables:
   - name: LAUNCHCONTROL_CLUSTER_ISSUER
     description: "A cert-manager's ClusterIssuer name to be used for TLS ingress"
     default: ca-issuer
+

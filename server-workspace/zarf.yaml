@@ -81,3 +81,4 @@ variables:
   - name: WORKSPACE_LICENSE
     description: "Workspace license"
     default: ""
+
