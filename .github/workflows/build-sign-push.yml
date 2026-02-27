@@ -27,9 +27,9 @@ jobs:
           fetch-depth: 0
 
       - name: Install Zarf
-        uses: zarf-dev/setup-zarf@v1
+        uses: zarf-dev/setup-zarf@main
         with:
-          version: latest
+          version: v0.73.0
 
       - name: Zarf Registry Login
         run: |
