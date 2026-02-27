@@ -69,12 +69,11 @@ jobs:
             echo "📦 Signing: $PACKAGE_FILE"
             zarf package sign "$PACKAGE_FILE" \
               --signing-key cosign.key \
-              --signing-key-pass "$KEY_PASSWORD" \
-              --confirm
+              --signing-key-pass "$KEY_PASSWORD"
 
             echo "📦 Publishing: $PACKAGE_FILE"
             OCI_PATH_LOWER=$(echo "$OCI_PATH" | tr '[:upper:]' '[:lower:]')
-            zarf package publish "$PACKAGE_FILE" "oci://$OCI_PATH_LOWER" --confirm
+            zarf package publish "$PACKAGE_FILE" "oci://$OCI_PATH_LOWER"
             
             echo "✅ Successfully pushed $PACKAGE_FILE"
           done
