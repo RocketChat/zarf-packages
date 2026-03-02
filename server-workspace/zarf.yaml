@@ -2,19 +2,19 @@ kind: ZarfPackageConfig
 metadata:
   name: rocketchat-server-workspace
   description: Rocket.Chat workspace
-  version: 7.10.6-z1
+  version: 8.2.0-z1
 
 components:
   - name: server
     required: true
     images:
-      - rocketchat/account-service:7.10.6
-      - rocketchat/authorization-service:7.10.6
-      - rocketchat/ddp-streamer-service:7.10.6
-      - rocketchat/omnichannel-transcript-service:7.10.6
-      - rocketchat/presence-service:7.10.6
-      - rocketchat/queue-worker-service:7.10.6
-      - rocketchat/rocket.chat:7.10.6
+      - rocketchat/account-service:8.2.0
+      - rocketchat/authorization-service:8.2.0
+      - rocketchat/ddp-streamer-service:8.2.0
+      - rocketchat/omnichannel-transcript-service:8.2.0
+      - rocketchat/presence-service:8.2.0
+      - rocketchat/queue-worker-service:8.2.0
+      - rocketchat/rocket.chat:8.2.0
       - nats:2.4.0-alpine # hidden in operator
       - natsio/prometheus-nats-exporter:0.9.3 # hidden in operator
       - natsio/nats-server-config-reloader:0.14.1 # hidden in operator
