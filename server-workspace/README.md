@@ -3,7 +3,7 @@
 The actual Rocket.Chat application instance configuration.
 
 * **Description:** Rocket.Chat workspace deployment.
-* **Version:** `7.10.6-z1`
+* **Version:** `8.2.0-z1`
 
 | Variable | Description | Default | Prompt |
 | --- | --- | --- | --- |

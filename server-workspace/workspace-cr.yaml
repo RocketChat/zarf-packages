@@ -6,7 +6,7 @@ metadata:
     ###ZARF_VAR_WORKSPACE_LABELS###
 spec:
   imagePrefix: rocketchat
-  imageTag: 7.10.6
+  imageTag: 8.2.0
   imagePullPolicy: IfNotPresent
   databaseClusterCode: workspaces
   databaseName: ###ZARF_VAR_WORKSPACE_NAME###
