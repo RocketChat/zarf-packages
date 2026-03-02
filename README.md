@@ -3,9 +3,9 @@
 This repository contains a collection of **Zarf packages** designed to deploy and manage a complete Rocket.Chat ecosystem in air-gapped or restricted environments.
 Zarf is an open-source tool designed to simplify the delivery of software into air-gapped, secure, or highly regulated environments by bundling all necessary dependencies into [packages](https://docs.zarf.dev/ref/packages/).
 
-## Verifying packages
+## Working with Zarf packages
 
-Write our public key to a file (`rc-zarf.pub`):
+Write Rocket.Chat's public key to a file (`rc-zarf.pub`):
 ```
 -----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEGRlNyEmY/vgPSXrlPvOZbp1xeCPg
@@ -13,18 +13,41 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEGRlNyEmY/vgPSXrlPvOZbp1xeCPg
 -----END PUBLIC KEY-----
 ```
 
-Then:
-```
+### Verify
+```bash
 zarf package verify oci://ghcr.io/rocketchat/<package-name>:<package-version> --key rc-zarf.pub
 ```
-You can also [deploy with signature verification](https://docs.zarf.dev/tutorials/5-package-signing-and-verification/#step-6-deploy-with-signature-verification).
 
-## Deploying packages
+### Save a copy
+```bash
+zarf package pull oci://ghcr.io/rocketchat/<package-name>:<package-version> --key rc-zarf.pub
+```
 
-It is recommended that your Kubernetes cluster contains  at least 3 nodes with 2 vCPUs, 6 GiB memory and 100G disk each.
-For testing, you can decrease storage and mongod limits. There's a README.md in each package folder with variables and defaults.
+### Deploy
+```bash
+# you can deploy from a local file or URL
+KUBECONFIG=<kubeconfig> zarf package deploy oci://ghcr.io/rocketchat/<package-name>:<package-version> --key rc-zarf.pub  --confirm
+```
 
-### Requirement: init the cluster
+You can find the most recent `<package-name>:<package-version>` inside each package folder, along with variables defaults
+and customizations to `--set KEY_1=<VAL_1> ... --set KEY_N=<VAL_N>` when deploying.
+
+### Building from a package source (unsigned)
+```bash
+zarf package create .  # inside each package folder
+```
+
+For more, check Zarf [deploy docs](https://docs.zarf.dev/tutorials/6-publish-and-deploy/#deploy-package).
+ 
+## Requirements
+
+It is recommended that your Kubernetes cluster contains at least 3 nodes with 2 vCPUs, 6 GiB memory and 100G disk each.
+For testing, you can decrease storage and mongod limits. Check the README.md in each package folder.
+
+### Zarf
+[Download and install Zarf](https://docs.zarf.dev/getting-started/install/)
+
+### Init the cluster
 
 ```
 KUBECONFIG=<kubeconfig> zarf init [--storage-class longhorn] [--confirm]
@@ -34,8 +57,9 @@ If there's no reliable storage class in the target cluster, init with what you h
 ```
 KUBECONFIG=<kubeconfig> zarf package deploy zarf-package-rocketchat-longhorn-*.tar.zst --components migrate-registry --confirm # move to longhorn
 ```
+Longhorn itself has its requirements. Check the package documentation.
 
-### Deploying
+## Deploying notes
 
 Deploy in order:
 - monitoring (requires a storage class)
