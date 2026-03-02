@@ -18,7 +18,12 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEGRlNyEmY/vgPSXrlPvOZbp1xeCPg
 zarf package verify oci://ghcr.io/rocketchat/<package-name>:<package-version> --key rc-zarf.pub
 ```
 
-### Save a copy
+### Extract SBOM
+```bash
+zarf package inspect sbom oci://ghcr.io/rocketchat/<package-name>:<package-version> --key rc-zarf.pub
+```
+
+### Save a local copy
 ```bash
 zarf package pull oci://ghcr.io/rocketchat/<package-name>:<package-version> --key rc-zarf.pub
 ```
