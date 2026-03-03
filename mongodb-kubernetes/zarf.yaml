@@ -2,7 +2,7 @@ kind: ZarfPackageConfig
 metadata:
   name: rocketchat-mongodb
   description: MongoDB Controllers for Kubernetes (MCK) and workspaces CE cluster
-  version: 1.6.1-z1
+  version: 1.6.1-z2
 
 components:
   - name: mongodb-operator
@@ -49,7 +49,7 @@ variables:
   - name: DATABASE_STORAGECLASS_NAME
     description: "The StorageClass name"
     prompt: true
-    default: longhorn
+    default: longhorn-mongodb
   - name: DATABASE_MEMBERS
     description: "The size of replica set"
     prompt: true
